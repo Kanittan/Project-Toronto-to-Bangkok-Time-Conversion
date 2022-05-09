@@ -1,0 +1,825 @@
+// Program that converts Toronto Time (EST OR EDT) to Bangkok Time:
+// Input: Time in Toronto and Date in Toronto
+// Output: Time in Bangkok and Date in Bangkok
+
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+// Function Declaration/ Function Prototype:
+bool checkValidTimeZone(char timeZoneStr[]);
+bool incorrectTimeZoneInput = false;
+
+bool checkValidDate(char inputDateStr[]);
+bool checkValidFormat(char inputDateStr[]);
+bool checkValidDay(char inputDateStr[]);
+bool checkValidMonth(char inputDateStr[]);
+
+bool checkValidTime(char inputTime[]);
+bool checkValidTimeFormat(char inputTime[]);
+bool checkValidHour(char inputTime[]);
+bool checkValidMinute(char inputTime[]);
+
+void convertTime(char inputTime[]);
+void convertDate(char inputDateStr[], int *count_day_ptr);
+
+// Global Variable Declaration:
+char timeZoneStr[10];  //String for timeZone User Input
+char EDTStr[10] = "EDT";
+char ESTStr[10] = "EST";
+char inputDateStr[10];  //String for Date (Toronto) User Input
+char inputTime[5];  //String for Toronto's Time
+
+int count_day = 0;
+int *count_day_ptr = &count_day; //Global Pointer
+int count_month = 0;
+int *count_month_ptr = &count_month; //Global Pointer
+int count_year = 0;
+int *count_year_ptr = &count_year; //Global Pointer
+
+int hour0 = 0;
+int *hour0_ptr = &hour0; //Global Pointer
+int hour1 = 0;
+int *hour1_ptr = &hour1; //Global Pointer
+int minute0 = 0;
+int *minute0_ptr = &minute0; //Global Pointer
+int minute1 = 0;
+int *minute1_ptr = &minute1; //Global Pointer
+int day0 = 0;
+int *day0_ptr = &day0; //Global Pointer
+int day1 = 0;
+int *day1_ptr = &day1; //Global Pointer
+int month0 = 0;
+int *month0_ptr = &month0; //Global Pointer
+int month1 = 0;
+int *month1_ptr = &month1; //Global Pointer
+
+int year0 = 0;
+int *year0_ptr = &year0; //Global Pointer
+int year1 = 0;
+int *year1_ptr = &year1; //Global Pointer
+int year2 = 0;
+int *year2_ptr = &year2; //Global Pointer
+int year3 = 0;
+int *year3_ptr = &year3; //Global Pointer
+
+// Global Pointer for Timezone Selection
+int time_zone = 0;
+int *time_zone_ptr = &time_zone;
+
+int main(void) {
+
+  // *count_day_ptr = 0;
+  // *count_month_ptr = 0;
+  // *count_year_ptr = 0;
+  
+  // 1.) Input TimeZone
+  do {
+    if(incorrectTimeZoneInput == true)
+    {
+      printf("Incorrect Time Zone Input, Please input again.\n");
+    }
+    printf("Choose Time Zone: ");
+    scanf("%s", timeZoneStr);
+  }while(checkValidTimeZone(timeZoneStr) == false);
+  //printf("CORRECT TIMEZONE INPUT!\n");
+
+  // SELECT Time Zone (EDT or EST):
+  if(strcmp(timeZoneStr,"EDT") == 0)
+  {
+    *time_zone_ptr = 11;
+  }
+  else if(strcmp(timeZoneStr,"EST") == 0)
+  {
+    *time_zone_ptr = 12;
+  }
+  
+  // 2.) Enter Time:
+  //while(1)
+  //{
+    do{
+    printf("Please Enter Toronto Time in (HH:MM)\n");
+    scanf("%s", inputTime);
+    printf("\n");
+    }while(checkValidTime(inputTime) == false);
+    //printf("VALID INPUT TIME!\n");
+
+
+  // 3.) Enter Date (Toronto)
+  do{
+    printf("Please Enter Date (Toronto) in (DD/MM/YYYY Format)\n");
+    scanf("%s", inputDateStr);
+    printf("\n");
+
+  }while(checkValidDate(inputDateStr) == false);
+  //printf("VALID INPUT DATE!\n");
+
+
+  // 4.) Convert Time
+  // In EDT: Thailand is 11 Hours ahead of Toronto
+  // In EST: Thailand is 12 Hours ahead of Toronto
+  convertTime(inputTime);
+  printf("\n");
+  convertDate(inputDateStr, &count_day);
+  printf("\n");
+  //}
+  
+  
+  return 0;
+}
+
+
+// 
+bool checkValidTimeZone(char timeZoneStr[])
+{
+  // Check Input for Timezone is correct
+  if((strcmp(timeZoneStr, EDTStr) == 0) || (strcmp(timeZoneStr, ESTStr) == 0))
+  {
+    incorrectTimeZoneInput = false;
+    return true;
+  }
+  incorrectTimeZoneInput = true;
+  return false;
+}
+
+
+//
+bool checkValidDate(char inputDateStr[])
+{
+  if(checkValidFormat(inputDateStr) == true)
+  {
+    //printf("Checkpoint 5\n");
+    if(checkValidMonth(inputDateStr) == true)
+    {
+      if(checkValidDay(inputDateStr) == true)
+      {
+        return true;
+      }
+      printf("Invalid Day\n");
+      return false;
+    }
+    printf("Invalid Month\n");
+    return false;
+  }
+  printf("Invalid Date Format\n");
+  return false;
+}
+
+
+
+///////////////////////////////////
+bool checkValidFormat(char inputDateStr[])
+{
+  if((strlen(inputDateStr) == 10) && (inputDateStr[2] == '/') && (inputDateStr[5] == '/'))
+  {
+    return true;
+  }
+  return false;  //If String Leghth != 10
+}
+
+
+bool checkValidDay(char inputDateStr[])  //Take in month since number of days depends on each month
+{
+  int month[2];
+  int day[2];
+  
+  for(int i=0; i<2; i++)
+  {
+    month[i] = inputDateStr[3+i] - 48; //Convert from Char to number (-48)
+  }
+
+  for(int j=0; j<2; j++)
+  {
+    day[j] = inputDateStr[j] - 48; //Convert from Char to number (-48)
+  }
+
+  
+  // Check Month(4) with 30 Days
+  if(((month[0] == 0) && ((month[1] == 4) || (month[1] == 6) || (month[1] == 9))) || ((month[0] == 1) && (month[1] == 1)))
+  {
+    if((day[0] == 0) && ((day[1] >= 1) && (day[1] <= 9)))
+    {
+      return true;
+    }
+
+    if(((day[0] == 1) || (day[0] == 2)) && ((day[1] >= 0) && (day[1] <= 9)))
+    {
+      return true;
+    }
+
+    if((day[0] == 3) && (day[1] == 0))
+    {
+      return true;
+    }
+    
+    return false;
+  }
+
+
+  // Check Month(7) with 31 Days
+  if(((month[0] == 0) && ((month[1] == 1) || (month[1] == 3) || (month[1] == 5) || (month[1] == 7) || (month[1] == 8))) || ((month[0] == 1) && ((month[1] == 0) || (month[1] == 2))))
+  {
+    if((day[0] == 0) && ((day[1] >= 1) && (day[1] <= 9)))
+    {
+      return true;
+    }
+
+    if(((day[0] == 1) || (day[0] == 2)) && ((day[1] >= 0) && (day[1] <= 9)))
+    {
+      return true;
+    }
+
+    if((day[0] == 3) && ((day[1] == 0) || (day[1] == 1)))
+    {
+      return true;
+    }
+    
+    return false;
+  }
+
+  
+  // Check February Month (28 Days)
+  if((month[0] == 0) && (month[1] == 2))
+  {
+    if((day[0] == 0) && ((day[1] >= 1) && (day[1] <= 9)))
+    {
+      return true;
+    }
+
+    if((day[0] == 1) && ((day[1] >= 0) && (day[1] <= 9)))
+    {
+      return true;
+    }
+
+    if((day[0] == 2) && ((day[1] >= 0) && (day[1] <= 8)))
+    {
+      return true;
+    }
+    
+    return false;
+  }
+
+}
+
+
+bool checkValidMonth(char inputDateStr[])
+{
+  int month[2];
+  for(int i=0; i<2; i++)
+  {
+    month[i] = inputDateStr[3+i] - 48; //Convert from Char to int number (-48)
+  }
+
+  //printf("month[0] = %d\n", month[0]);
+  //printf("month[1] = %d\n", month[1]);
+  
+  //printf("Checkpoint 1\n");
+  if((month[0] == 0) || (month[0] == 1))
+  {
+    //printf("Checkpoint 2\n");
+    if(month[0] == 0)
+    {
+      //printf("Checkpoint 3\n");
+      if((month[1] >= 1) && (month[1] <= 9))
+      {
+        //printf("Checkpoint 4\n");
+        return true;
+      }
+    }
+
+    if(month[0] == 1)
+    {
+      if((month[1] >= 0) && (month[1] <= 2))
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+  return false;
+}
+
+
+///////
+
+
+bool checkValidTime(char inputTime[])
+{
+  if(checkValidTimeFormat(inputTime) == true)
+  {
+    if(checkValidHour(inputTime) == true)
+    {
+      if(checkValidMinute(inputTime) == true)
+      {
+        return true;
+      }
+      printf("Invalid Minute\n");
+      return false;
+    }
+    printf("Invalid Hour\n");
+    return false;
+  }
+  printf("Invalid Time Format\n");
+  return false;
+  
+}
+
+
+bool checkValidTimeFormat(char inputTime[])
+{
+  if((strlen(inputTime) == 5) && (inputTime[2] = ':'))
+  {
+    return true;
+  }
+  return false;
+}
+
+
+bool checkValidHour(char inputTime[])
+{
+  int hour[2];
+  for(int i=0; i<2; i++)
+  {
+    hour[i] = inputTime[i] - 48;  //Convert from Char to int number (-48)
+  }
+
+  if((hour[0] == 0) && ((hour[1] >= 0) && (hour[1] <= 9)))
+  {
+    return true;
+  }
+
+  if((hour[0] == 1) && ((hour[1] >= 0) && (hour[1] <= 9)))
+  {
+    return true;
+  }
+
+  if((hour[0] == 2) && ((hour[1] >= 0) && (hour[1] <= 3)))
+  {
+    return true;
+  }
+
+  return false;
+}
+
+
+bool checkValidMinute(char inputTime[])
+{
+  int minute[2];
+  for(int i=0; i<2; i++)
+  {
+    minute[i] = inputTime[3+i] - 48;  //Convert from Char to int number (-48)
+  }
+
+  if(((minute[0] == 0) || (minute[0] == 1) || (minute[0] == 2) || (minute[0] == 3) || (minute[0] == 4) || (minute[0] == 5)) && ((minute[1] >= 0) && (minute[1] <= 9)))
+  {
+    return true;
+  }
+  return false;
+}
+
+
+
+///////////////////
+void convertTime(char inputTime[])
+{
+  int minute[2];
+  int hour[2];
+  
+  for(int i=0; i<2; i++)
+  {
+    hour[i] = inputTime[i] - 48;  //Convert from Char to int number (-48)
+  }
+
+  for(int i=0; i<2; i++)
+  {
+    minute[i] = inputTime[3+i] - 48;  //Convert from Char to int number (-48)
+  }
+  
+  
+  int initial_hour1 = hour[1];
+
+  int total_hour = 0;
+  
+  while(total_hour <  *time_zone_ptr) // Replace "11" with *time_zone_ptr
+  {
+    if(((hour[1] >= 0) && (hour[1] < 9)) && (hour[0] <= 1))
+    {
+      hour[1] = hour[1] + 1;
+      total_hour = total_hour + 1;
+    }
+    
+    if((hour[1] == 9) && (hour[0] <= 1))
+    {
+        hour[0] = hour[0] + 1;
+        hour[1] = 0;  //Reset hour[1] to initial hour[1] at the very beginning
+        total_hour = total_hour + 1;
+    }
+    
+    if(((hour[1] >= 0) && (hour[1] <= 3)) && (hour[0] == 2))
+    {
+      hour[1] = hour[1] + 1;
+      total_hour = total_hour + 1;
+    }
+    
+    if((hour[1] == 4) && (hour[0] == 2))
+    {
+        hour[0] = 0;  //Reset hour[0] to 9
+        hour[1] = 0;  //Reset hour[1] to 9
+        //total_hour = total_hour + 1;
+
+        *count_day_ptr = *count_day_ptr + 1;
+        //printf("count_day = %d\n", *count_day_ptr);
+      
+        // *count_day_prev_ptr = *count_day_ptr;
+        // if(*count_day_ptr > *count_day_prev_ptr)
+        // {
+        //   *count_day_ptr = *count_day_ptr + 1;
+        // }
+        //printf("count_day = %d\n", *count_day_ptr);
+    }
+  }
+  *minute0_ptr = minute[0];
+  *minute1_ptr = minute[1];
+  *hour0_ptr = hour[0];
+  *hour1_ptr = hour[1];
+
+
+  // Concatenate HOUR: hou0 with hour1
+    int hour_arr0[1];
+    hour_arr0[0] = hour[0];
+  
+    int hour_arr1[1];
+    hour_arr1[0] = hour[1];
+  
+    char char_hour0[7]; //3+2(:)+ 2 = 10 //SET 7 WORKS
+    sprintf(char_hour0, "%d", hour_arr0[0]);
+  
+    char char_hour1[5];
+    sprintf(char_hour1, "%d", hour_arr1[0]);
+  
+    strcat(char_hour0, char_hour1);
+    //printf("char_day0 = %s\n", char_day0); //WORKED!
+
+    char colon[1];
+    colon[0] = ':';
+    strcat(char_hour0, colon);
+    //printf("char_with_dash0 = %s\n", char_day0); //WORKED!
+
+    
+
+  
+    // Concatenate MONTH: month0 with month1
+    int minute_arr0[1];
+    minute_arr0[0] = minute[0];
+  
+    int minute_arr1[1];
+    minute_arr1[0] = minute[1];
+  
+    char char_minute0[5];
+    sprintf(char_minute0, "%d", minute_arr0[0]);
+  
+    char char_minute1[2];
+    sprintf(char_minute1, "%d", minute_arr1[0]);
+  
+    strcat(char_minute0, char_minute1);
+
+  
+    strcat(char_hour0, char_minute0);
+    printf("Converted to Bangkok Time:\n");
+    printf("Time in Bangkok = %s\n", char_hour0); //WORKED!
+}
+
+
+void convertDate(char inputDateStr[], int *count_day_ptr)
+{
+  //printf("Checkpoint1\n");
+  
+  int month[2];
+  int day[2];
+  int year[4];
+  
+  for(int i=0; i<2; i++)
+  {
+    month[i] = inputDateStr[3+i] - 48; //Convert from Char to number (-48)
+  }
+
+  for(int j=0; j<2; j++)
+  {
+    day[j] = inputDateStr[j] - 48; //Convert from Char to number (-48)
+  }
+
+  for(int k=0; k<4; k++)
+  {
+    year[k] = inputDateStr[6+k] - 48; //Convert from Char to number (-48)
+  }
+
+  int total_day = 0;
+  
+  while(total_day < *count_day_ptr)
+  {
+    //printf("Total Day = %d\n", total_day);
+    // Month with 28 Days (February)
+    if((month[0] == 0) && (month[1] == 2))
+    {
+      //printf("Checkpoint1\n");
+      if(((day[1] >= 0) && (day[1] < 9)) && (day[0] <= 1))
+      {
+        //printf("Checkpoint2\n");
+        day[1] = day[1] + 1;
+        total_day = total_day + 1;
+      }
+      
+      if((day[1] == 9) && (day[0] <= 1))
+      {
+        //printf("Checkpoint3\n");
+        day[0] = day[0] + 1;
+        day[1] = 0;  //Reset hour[1] to initial hour[1] at the very beginning
+        total_day = total_day + 1;
+      }
+      if(((day[1] >= 0) && (day[1] <= 8)) && (day[0] == 2))
+      {
+        //printf("Checkpoint4\n");
+        day[1] = day[1] + 1;
+        total_day = total_day + 1;
+      }
+
+      if((day[1] == 9) && (day[0] == 2))
+      {
+        //printf("Checkpoint5\n");
+          day[0] = 0;  //Reset hour[0] to 9
+          day[1] = 1;  //Reset day[1] to "1" and increment month
+          //total_day = total_day + 1;
+          //*count_day_ptr = 0;  //Reset *count_day_ptr to "0"
+          *count_month_ptr = *count_month_ptr + 1;
+          //printf("count_month = %d\n", *count_month_ptr);
+      }
+      //printf("Checkpoint6\n");
+    }
+    
+    if(((month[0] == 0) && ((month[1] == 4) || (month[1] == 6) || (month[1] == 9))) || ((month[0] == 1) && (month[1] == 1))) //Month with 30 Days
+    {
+      if(((day[1] >= 0) && (day[1] < 9)) && (day[0] <= 2))
+      {
+        day[1] = day[1] + 1;
+        total_day = total_day + 1;
+      }
+    
+      if((day[1] == 9) && (day[0] <= 2))
+      {
+        day[0] = day[0] + 1;
+        day[1] = 0;  //Reset hour[1] to initial hour[1] at the very beginning
+        total_day = total_day + 1;
+      }
+      
+      if((day[1] == 0) && (day[0] == 3))
+      {
+        day[1] = day[1] + 1;
+        total_day = total_day + 1;
+      }
+
+      if((day[1] == 1) && (day[0] == 3))
+      {
+          day[0] = 0;  //Reset hour[0] to 9
+          day[1] = 1;  //Reset day[1] to "1" and increment month
+          //total_day = total_day + 1;
+          //*count_day_ptr = 0;  //Reset *count_day_ptr to "0"
+          *count_month_ptr = *count_month_ptr + 1;
+          //printf("count_month = %d\n", *count_month_ptr);
+      }
+    }
+    
+    if(((month[0] == 0) && ((month[1] == 1) || (month[1] == 3) || (month[1] == 5) || (month[1] == 7) || (month[1] == 8))) || ((month[0] == 1) && ((month[1] == 0) || (month[1] == 2)))) //Month with 31 Days
+    {
+      //printf("Checkpoint2\n");
+      
+      if(((day[1] >= 0) && (day[1] < 9)) && (day[0] <= 2))
+      {
+        day[1] = day[1] + 1;
+        total_day = total_day + 1;
+      }
+    
+      if((day[1] == 9) && (day[0] <= 2))
+      {
+        day[0] = day[0] + 1;
+        day[1] = 0;  //Reset hour[1] to initial hour[1] at the very beginning
+        total_day = total_day + 1;
+      }
+      
+      if(((day[1] >= 0) && (day[1] <= 1)) && (day[0] == 3))
+      {
+        day[1] = day[1] + 1;
+        total_day = total_day + 1;
+      }
+
+      if((day[1] == 2) && (day[0] == 3))
+      {
+          day[0] = 0;  //Reset day[0] to 0
+          day[1] = 1;  //Reset day[1] to "1" and increment month
+          //total_day = total_day + 1;
+          //*count_day_ptr = 0;  //Reset *count_day_ptr to "0"
+          *count_month_ptr = *count_month_ptr + 1;
+          //printf("count_month = %d\n", *count_month_ptr);
+      }
+    }
+
+    //printf("Checkpoint5\n");
+  }//End of While Loop
+    
+    if(*count_month_ptr > 0)
+    {
+      //printf("Checkpoint8\n");
+      if((month[0] == 1) && (month[1] == 2))
+      {
+        month[0] = 0;  //Reset Month to that of the new year
+        month[1] = 1;  //Reset Month to that of the new year
+        //*count_month_ptr = 0;  //Reset *count_month_ptr to "0"
+        
+        *count_year_ptr = *count_year_ptr + 1;
+      }
+    }
+
+  
+    if(*count_year_ptr > 0)
+    {
+      int shift1 = 0;
+      int shift2 = 0;
+      int shift3 = 0;
+
+      //printf("ENTERED 1\n");
+      if((year[3] >= 0) && (year[3] <= 8))
+      {
+        //printf("ENTERED 2\n");
+        year[3] = year[3] + 1;
+      }
+
+      if(year[3] == 9)
+      {
+        year[3] = 0;  //Reset year[3] to "0"
+        year[2] = year[2] +1;
+        shift1 = 1;
+      }
+
+      //printf("shift1 = %d", shift1);
+      if(shift1 == 1)
+      {
+        if((year[2] >= 0) && (year[2] <= 8))
+        {
+          year[2] = year[2] + 1;
+        }
+
+        if(year[2] == 9)
+        {
+          year[2] = 0;  //Reset year[3] to "0"
+          year[1] = year[1] +1;
+          shift2 = 1;
+          shift1 = 0;  //Reset shift1 to "0"
+        }
+      }
+
+      //printf("shift2 = %d", shift2);
+      if(shift2 == 1)
+      {
+        if((year[1] >= 0) && (year[1] <= 8))
+        {
+          year[1] = year[1] +1;
+        }
+
+        if(year[1] == 9)
+        {
+          year[1] = 0;  //Reset year[3] to "0"
+          year[0] = year[0] +1;
+          shift3 = 1;
+          shift2 = 0;  //Reset shift2 to "0"
+        }
+      }
+
+      //printf("shift3 = %d", shift3);
+      if(shift3 == 1)
+      {
+        if((year[0] >= 0) && (year[0] <= 8))
+        {
+          year[0] = year[0] +1;
+        }
+
+        if(year[0] == 9)
+        {
+          shift3 = 0;  //Reset shift2 to "0"
+        }
+      }
+    }
+
+  
+    //printf("Checkpoint7\n");
+    *day0_ptr = day[0];
+    *day1_ptr = day[1];
+    //1.) create string of length 2
+    //2.) concat(a, b) to add them together
+    //int day_combined = concat(*day0_ptr, *day1_ptr);
+  
+    *month0_ptr = month[0];
+    *month1_ptr = month[1];
+    //1.) create string of length 2
+    //2.) concat(a, b) to add them together
+    //int month_combined = concat(*month0_ptr, *month1_ptr;
+  
+    *year0_ptr = year[0];
+    *year1_ptr = year[1];
+    *year2_ptr = year[2];
+    *year3_ptr = year[3];
+    //1.) create string of length 4
+    //2.) concat(a, b) to add them together
+    // int year_combined1 = concat(*year0_ptr, *year1_ptr);
+    // int year_combined2 = concat(*year2_ptr, *year3_ptr);
+    // int year_combined3 = concat(year_combined1, year_combined2);
+
+  //printf("REACHED DAY!\n");
+    // Concatenate DAY: day0 with day1
+    int day_arr0[1];
+    day_arr0[0] = *day0_ptr;
+  
+    int day_arr1[1];
+    day_arr1[0] = *day1_ptr;
+  
+    char char_day0[20]; //3+2(slash)+7 + 8 = 20
+    sprintf(char_day0, "%d", day_arr0[0]);
+  
+    char char_day1[5];
+    sprintf(char_day1, "%d", day_arr1[0]);
+  
+    strcat(char_day0, char_day1);
+    //printf("char_day0 = %s\n", char_day0); //WORKED!
+
+    char slash0[2];
+    slash0[0] = '/';
+    strcat(char_day0, slash0);
+    //printf("char_with_dash0 = %s\n", char_day0); //WORKED!
+
+    
+
+  
+    // Concatenate MONTH: month0 with month1
+    int month_arr0[1];
+    month_arr0[0] = *month0_ptr;
+  
+    int month_arr1[1];
+    month_arr1[0] = *month1_ptr;
+  
+    char char_month0[5];
+    sprintf(char_month0, "%d", month_arr0[0]);
+  
+    char char_month1[5];
+    sprintf(char_month1, "%d", month_arr1[0]);
+  
+    strcat(char_month0, char_month1);
+    //printf("char_month0 = %s\n", char_month0); //WORKED!
+
+    char slash1[2];
+    slash1[0] = '/';
+    strcat(char_month0, slash1);
+    //printf("char_with_dash1 = %s\n", char_month0); //WORKED!
+
+
+    strcat(char_day0, char_month0);
+    //printf("char_day_with_month = %s\n", char_day0); //WORKED!
+
+
+  
+    // Concatenate YEAR: year0 with year1
+    int year_arr0[1];
+    year_arr0[0] = *year0_ptr;
+  
+    int year_arr1[1];
+    year_arr1[0] = *year1_ptr;
+  
+    int year_arr2[1];
+    year_arr2[0] = *year2_ptr;
+  
+    int year_arr3[1];
+    year_arr3[0] = *year3_ptr;
+  
+  
+    char char_year0[8];
+    sprintf(char_year0, "%d", year_arr0[0]);
+  
+    char char_year1[8];
+    sprintf(char_year1, "%d", year_arr1[0]);
+  
+    char char_year2[8];
+    sprintf(char_year2, "%d", year_arr2[0]);
+  
+    char char_year3[8];
+    sprintf(char_year3, "%d", year_arr3[0]);
+  
+    strcat(char_year0, char_year1);
+    strcat(char_year2, char_year3);
+    
+    strcat(char_year0, char_year2);
+  
+    //printf("char_year0 = %s\n", char_year0); //WORKED!
+
+    strcat(char_day0, char_year0);
+    printf("Converted to Bangkok Date:\n");
+    printf("Date in Bangkok= %s", char_day0); //WORKED!
+ 
+}
