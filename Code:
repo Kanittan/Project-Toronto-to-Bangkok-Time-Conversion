@@ -60,8 +60,11 @@ int year3 = 0;
 int *year3_ptr = &year3; //Global Pointer
 int time_zone = 0;  // Global Pointer for Timezone Selection
 int *time_zone_ptr = &time_zone; 
+// int feb_day = 0;  // Global Pointer for Timezone Selection
+// int *feb_day_ptr = &feb_day; 
 
 int main(void) {
+  printf("Toronto to Bangkok Time Conversion\n");
   // 1.) Input TimeZone
   do {
     if(incorrectTimeZoneInput == true)
@@ -410,43 +413,47 @@ void convertTime(char inputTime[])
         hour[1] = 0;  //Reset hour[1] to 9
 
         *count_day_ptr = *count_day_ptr + 1;
-        printf("*count_day_ptr = %d\n", *count_day_ptr);
+        //printf("*count_day_ptr = %d\n", *count_day_ptr);
     }
   }
-  *minute0_ptr = minute[0];
-  *minute1_ptr = minute[1];
-  *hour0_ptr = hour[0];
-  *hour1_ptr = hour[1];
+  // *minute0_ptr = minute[0];
+  // *minute1_ptr = minute[1];
+  // *hour0_ptr = hour[0];
+  // *hour1_ptr = hour[1];
 
 
   // Concatenate HOUR: hour0 with hour1
-    int hour_arr0[1];
-    hour_arr0[0] = hour[0];
-    int hour_arr1[1];
-    hour_arr1[0] = hour[1];
-    char char_hour0[7]; //3+2(:)+ 2 = 10 //SET 7 WORKS
-    sprintf(char_hour0, "%d", hour_arr0[0]);
-    char char_hour1[5];
-    sprintf(char_hour1, "%d", hour_arr1[0]);
+    int hour0 = hour[0];
+    int *hour0_ptr = &hour0;
+
+    int hour1 = hour[1];
+    int *hour1_ptr = &hour1;
+
+  
+    char char_hour0[6]; //3+2(:)+ 2 = 10 //SET 7 WORKS
+    sprintf(char_hour0, "%d", *hour0_ptr);
+    char char_hour1[2];
+    sprintf(char_hour1, "%d", *hour1_ptr);
   
     strcat(char_hour0, char_hour1);
     //printf("char_day0 = %s\n", char_day0); //WORKED!
 
-    char colon[1];
-    colon[0] = ':';
-    strcat(char_hour0, colon);
+    strcat(char_hour0, ":");
     //printf("char_with_dash0 = %s\n", char_day0); //WORKED!
 
   
-    // Concatenate MONTH: month0 with month1
-    int minute_arr0[1];
-    minute_arr0[0] = minute[0];
-    int minute_arr1[1];
-    minute_arr1[0] = minute[1];
-    char char_minute0[5];
-    sprintf(char_minute0, "%d", minute_arr0[0]);
+    // Concatenate MINUTE: minute0 with minute1
+    int minute0 = minute[0];
+    int *minute0_ptr = &minute0;
+
+    int minute1 = minute[1];
+    int *minute1_ptr = &minute1;
+
+  
+    char char_minute0[3];
+    sprintf(char_minute0, "%d", *minute0_ptr);
     char char_minute1[2];
-    sprintf(char_minute1, "%d", minute_arr1[0]);
+    sprintf(char_minute1, "%d", *minute1_ptr);
   
     strcat(char_minute0, char_minute1);
   
@@ -576,9 +583,9 @@ void convertDate(char inputDateStr[], int *count_day_ptr)
   }//End of While Loop
 
   //printf("ENTERED 7\n");
-  printf("*count_day_ptr = %d\n", *count_day_ptr);
-  printf("*count_month_ptr = %d\n", *count_month_ptr);
-  printf("*count_year_ptr = %d\n", *count_year_ptr);
+  // printf("*count_day_ptr = %d\n", *count_day_ptr);
+  // printf("*count_month_ptr = %d\n", *count_month_ptr);
+  // printf("*count_year_ptr = %d\n", *count_year_ptr);
 
   if((day[1] == 2) && (day[0] == 3))
   {
@@ -685,57 +692,54 @@ void convertDate(char inputDateStr[], int *count_day_ptr)
   }
 
   
-  *day0_ptr = day[0];
-  *day1_ptr = day[1];
-  *month0_ptr = month[0];
-  *month1_ptr = month[1];
-  *year0_ptr = year[0];
-  *year1_ptr = year[1];
-  *year2_ptr = year[2];
-  *year3_ptr = year[3];
+  // *day0_ptr = day[0];
+  // *day1_ptr = day[1];
+  // *month0_ptr = month[0];
+  // *month1_ptr = month[1];
+  // *year0_ptr = year[0];
+  // *year1_ptr = year[1];
+  // *year2_ptr = year[2];
+  // *year3_ptr = year[3];
 
   
   // Concatenate DAY: day0 with day1
-  int day_arr0[1];
-  day_arr0[0] = *day0_ptr;
+  int day0 = day[0];
+  int *day0_ptr = &day0;
+
+  int day1 = day[1];
+  int *day1_ptr = &day1;
+
+
+  char char_day0[11]; //3+2(slash)+7 + 8 = 20
+  sprintf(char_day0, "%d", *day0_ptr);  //Convert int to string
   
-  int day_arr1[1];
-  day_arr1[0] = *day1_ptr;
-  
-  char char_day0[20]; //3+2(slash)+7 + 8 = 20
-  sprintf(char_day0, "%d", day_arr0[0]);  //Convert int to string
-  
-  char char_day1[5];
-  sprintf(char_day1, "%d", day_arr1[0]);  //Convert int to string
+  char char_day1[2];
+  sprintf(char_day1, "%d", *day1_ptr);  //Convert int to string
   
   strcat(char_day0, char_day1); 
   //printf("char_day0 = %s\n", char_day0); //WORKED!
 
-  char slash0[2];
-  slash0[0] = '/';
-  strcat(char_day0, slash0);
+  strcat(char_day0, "/");
   //printf("char_with_dash0 = %s\n", char_day0); //WORKED!
 
   
   // Concatenate MONTH: month0 with month1
-  int month_arr0[1];
-  month_arr0[0] = *month0_ptr;
+  int month0 = month[0];
+  int *month0_ptr = &month0;
+
+  int month1 = month[1];
+  int *month1_ptr = &month1;
   
-  int month_arr1[1];
-  month_arr1[0] = *month1_ptr;
+  char char_month0[4];
+  sprintf(char_month0, "%d", *month0_ptr);  //Convert int to string
   
-  char char_month0[5];
-  sprintf(char_month0, "%d", month_arr0[0]);  //Convert int to string
-  
-  char char_month1[5];
-  sprintf(char_month1, "%d", month_arr1[0]);  //Convert int to string
+  char char_month1[2];
+  sprintf(char_month1, "%d", *month1_ptr);  //Convert int to string
   
   strcat(char_month0, char_month1);
   //printf("char_month0 = %s\n", char_month0); //WORKED!
 
-  char slash1[2];
-  slash1[0] = '/';
-  strcat(char_month0, slash1);
+  strcat(char_month0, "/");
   //printf("char_with_dash1 = %s\n", char_month0); //WORKED!
 
 
@@ -744,34 +748,33 @@ void convertDate(char inputDateStr[], int *count_day_ptr)
 
 
   // Concatenate YEAR: year0 with year1
-  int year_arr0[1];
-  year_arr0[0] = *year0_ptr;
+  int year0 = year[0];
+  int *year0_ptr = &year0;
+
+  int year1 = year[1];
+  int *year1_ptr = &year1;
+
+  int year2 = year[2];
+  int *year2_ptr = &year2;
+
+  int year3 = year[3];
+  int *year3_ptr = &year3;
   
-  int year_arr1[1];
-  year_arr1[0] = *year1_ptr;
+  char char_year0[5];
+  sprintf(char_year0, "%d", *year0_ptr);  //Convert int to string
   
-  int year_arr2[1];
-  year_arr2[0] = *year2_ptr;
+  char char_year1[2];
+  sprintf(char_year1, "%d", *year1_ptr);  //Convert int to string
   
-  int year_arr3[1];
-  year_arr3[0] = *year3_ptr;
+  char char_year2[2];
+  sprintf(char_year2, "%d", *year2_ptr);  //Convert int to string
   
-  char char_year0[8];
-  sprintf(char_year0, "%d", year_arr0[0]);  //Convert int to string
-  
-  char char_year1[8];
-  sprintf(char_year1, "%d", year_arr1[0]);  //Convert int to string
-  
-  char char_year2[8];
-  sprintf(char_year2, "%d", year_arr2[0]);  //Convert int to string
-  
-  char char_year3[8];
-  sprintf(char_year3, "%d", year_arr3[0]);  //Convert int to string
+  char char_year3[2];
+  sprintf(char_year3, "%d", *year3_ptr);  //Convert int to string
   
   strcat(char_year0, char_year1);
-  strcat(char_year2, char_year3);
-    
   strcat(char_year0, char_year2);
+  strcat(char_year0, char_year3);
   
   //printf("char_year0 = %s\n", char_year0); //WORKED!
 
