@@ -22,3 +22,7 @@ Used Logic, Algorithm, Array, Pointers, string and character-wise manipulation t
     -  OUTPUT (In EDT): Bangkok's Time will be 1:59 (HH:MM) AND Toronto's Date is 01/01/2023 (DD/MM/YYYY)
 
 -  Displaying the Result in the SAME Formate of HH:MM for Time AND DD/MM/YYYY for Date
+
+#### To Test Code:
+1. Go to: https://www.programiz.com/c-programming/online-compiler/
+2. Copy the code and paste it into the above online C Compiler
