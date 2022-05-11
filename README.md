@@ -23,6 +23,6 @@ Used Logic, Algorithm, Array, Pointers, string and character-wise manipulation t
 
 -  Displaying the Result in the SAME Formate of HH:MM for Time AND DD/MM/YYYY for Date
 
-#### To Test Code:
+### To Test Code:
 1. Go to: https://www.programiz.com/c-programming/online-compiler/
 2. Copy the code and paste it into the above online C Compiler
